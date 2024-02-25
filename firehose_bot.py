@@ -70,28 +70,28 @@ class FirehoseBot:
                 # Just for fun :)
                 # Delete before actually using
                 if "translate-bot" in record["text"].lower():
-                    print(record['text'])
+                    print(record)
                     print(self.translate_in_native_language(record['text'], 'japanese'))
 
             
-                if "hack-bot" in record["text"]:
-                    # get some info about the poster, their posts, and the thread they tagged the bot in
-                    poster_posts = client.get_author_feed(
-                        actor=record["author"], cursor=None, filter=None, limit=100
-                    ).feed
-                    poster_follows = client.get_follows(actor=record["author"]).follows
-                    poster_profile = client.get_profile(actor=record["author"])
-                    posts_in_thread = client.get_post_thread(uri=record["uri"])
+                # if "hack-bot" in record["text"]:
+                #     # get some info about the poster, their posts, and the thread they tagged the bot in
+                #     poster_posts = client.get_author_feed(
+                #         actor=record["author"], cursor=None, filter=None, limit=100
+                #     ).feed
+                #     poster_follows = client.get_follows(actor=record["author"]).follows
+                #     poster_profile = client.get_profile(actor=record["author"])
+                #     posts_in_thread = client.get_post_thread(uri=record["uri"])
 
-                    # send a reply to the post
-                    record_ref = {"uri": record["uri"], "cid": record["cid"]}
-                    reply_ref = models.AppBskyFeedPost.ReplyRef(
-                        parent=record_ref, root=record_ref
-                    )
-                    client.send_post(
-                        reply_to=reply_ref,
-                        text=f"Hey, {poster_profile.display_name}. You have {len(poster_posts)} posts and {len(poster_follows)} follows. Your bio is: {poster_profile.description}. There are {len(posts_in_thread)} posts in the thread.",
-                    )
+                #     # send a reply to the post
+                #     record_ref = {"uri": record["uri"], "cid": record["cid"]}
+                #     reply_ref = models.AppBskyFeedPost.ReplyRef(
+                #         parent=record_ref, root=record_ref
+                #     )
+                #     client.send_post(
+                #         reply_to=reply_ref,
+                #         text=f"Hey, {poster_profile.display_name}. You have {len(poster_posts)} posts and {len(poster_follows)} follows. Your bio is: {poster_profile.description}. There are {len(posts_in_thread)} posts in the thread.",
+                #     )
 
             # elif uri.collection == models.ids.AppBskyFeedLike:
             #     print("Created like: ", record)
