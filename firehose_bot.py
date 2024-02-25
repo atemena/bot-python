@@ -10,6 +10,7 @@ from atproto import (
 )
 from dotenv import load_dotenv
 from openai import OpenAI
+from datetime import datetime
 
 class FirehoseBot:
     def __init__(self):
@@ -44,7 +45,7 @@ class FirehoseBot:
                 messages=messages, 
             )
 
-        print(response.choices[0].message.content)
+        return response.choices[0].message.content
 
     def process_operation(self, op: models.ComAtprotoSyncSubscribeRepos.RepoOp, car: CAR, commit: models.ComAtprotoSyncSubscribeRepos.Commit) -> None:
         uri = AtUri.from_str(f"at://{commit.repo}/{op.path}")
@@ -71,8 +72,23 @@ class FirehoseBot:
                 # Delete before actually using
                 if "translate-bot" in record["text"].lower():
                     print(record)
-                    print(self.translate_in_native_language(record['text'], 'japanese'))
-
+                    translated = self.translate_in_native_language(record['text'], 'japanese')
+                    print(translated)
+                    post = {
+                        # "$type": "app.bsky.feed.post",
+                        "text": translated,
+                        # "createdAt": datetime.now().isoformat(),
+                        "langs": [ "ja" ],
+                        "embed": {
+                            "$type": "app.bsky.embed.record",
+                            "record": {
+                            "uri": record["uri"],
+                            "cid": record["cid"]
+                            }
+                        }
+                    }
+                    print(post)
+                    self.client.post(**post)
             
                 # if "hack-bot" in record["text"]:
                 #     # get some info about the poster, their posts, and the thread they tagged the bot in
